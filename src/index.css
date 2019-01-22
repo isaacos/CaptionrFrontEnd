@@ -1,0 +1,12 @@
+.caption-photo{
+  width:20vw;
+  height:20vw;
+  object-fit: cover;
+}
+
+.photo-card{
+  border: 1px solid black;
+  display:inline-block;
+  padding:1vmin;
+  margin:1vmin;
+}
