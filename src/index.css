@@ -10,3 +10,27 @@
   padding:1vmin;
   margin:1vmin;
 }
+
+#photo-display{
+  display: inline-block;
+}
+
+#photo-display-img{
+  width: 60vw;
+  height: 60vw;
+  object-fit: cover;
+  border: 1px solid black;
+}
+
+#sidebar{
+  width: 20%;
+  display: inline-block;
+  height:100%;
+}
+
+#container{
+  width: 79%;
+  display:inline-block;
+  vertical-align: top;
+  height: 100%;
+}
