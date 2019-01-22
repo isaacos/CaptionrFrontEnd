@@ -1,5 +1,5 @@
 const ALLPHOTOS = [];
-let CURRENTUSERID;
+let CURRENTUSER;
 
 const photosContainer = document.getElementById('photo-list-container')
 const photoDisplay = document.getElementById('photo-display')
@@ -8,6 +8,10 @@ const addPhotoDiv = document.getElementById('add-photo-div')
 const userForm = document.getElementById('user-form')
 const loginButton = document.getElementById('login')
 const registerButton = document.getElementById('register')
+const headers = {
+  "Content-Type": "application/json",
+  "Accept": "application/json"
+}
 
 
 fetch('http://localhost:3000/api/v1/photos')
@@ -67,12 +71,35 @@ function photoCardHTMLMaker(photo){
   `
 }
 
-function toggleRegisterForm(){
-  return `
-    <form id="register-form">
-      <input type="text" id="register-username">
+function toggleLoginForm(){
+  if(userForm.dataset.action!=="login"){
+    userForm.dataset.action="login"
+    return `
+    <form id="login-form">
+    <label for="login-username">Username</label>
+    <input type="text" id="login-username">
+    <button type="submit">Log In</button>
     </form>
-  `
+    `
+  }else{
+    userForm.dataset.action=""
+    return ""
+  }
+}
+function toggleRegisterForm(){
+  if(userForm.dataset.action!=="register"){
+    userForm.dataset.action="register"
+    return `
+      <form id="register-form">
+        <label for="register-username">Username</label>
+        <input type="text" id="register-username">
+        <button type="submit">Register</button>
+      </form>
+    `
+  }else{
+    userForm.dataset.action=""
+    return ""
+  }
 }
 
 function fillPhotoDisplay(photo){
@@ -117,10 +144,7 @@ photoDisplay.addEventListener('submit', () => {
   let commentBody =  document.querySelector('#comment-body').value
   fetch(`http://localhost:3000/api/v1/comments`, {
     method: "POST",
-    headers:{
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
+    headers: headers,
     body: JSON.stringify({body: commentBody, photo_id: event.target.dataset.id})
   })
   .then(response => response.json())
@@ -132,10 +156,11 @@ photoDisplay.addEventListener('submit', () => {
 
 
 registerButton.addEventListener('click', () =>{
+  console.log("Register")
   userForm.innerHTML=toggleRegisterForm()
 })
 loginButton.addEventListener('click', () =>{
-  toggleLoginForm()
+  userForm.innerHTML=toggleLoginForm()
 })
 
 addPhotoDiv.addEventListener('submit', () =>{
@@ -145,10 +170,7 @@ addPhotoDiv.addEventListener('submit', () =>{
 
   fetch('http://localhost:3000/api/v1/photos', {
     method: "POST",
-    headers:{
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
+    headers: headers,
     body: JSON.stringify(photo)
   }).then(response => response.json())
   .then(data => {
@@ -156,4 +178,32 @@ addPhotoDiv.addEventListener('submit', () =>{
     ALLPHOTOS.push(data)
     photosIteratorAndDisplayer(ALLPHOTOS)
   })
+})
+
+userForm.addEventListener('submit', () => {
+
+  event.preventDefault()
+  if(event.target.id === 'register-form'){
+    fetch('http://localhost:3000/api/v1/register', {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        username: document.getElementById('register-username').value
+      })
+    })
+    .then(response => response.json())
+    .then(data => CURRENTUSER = data)
+  }
+
+  if(event.target.id === 'login-form'){
+    fetch('http://localhost:3000/api/v1/login', {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        username: document.getElementById('login-username').value
+      })
+    })
+    .then(response => response.json())
+    .then(data => CURRENTUSER=data)
+  }
 })
