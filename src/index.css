@@ -34,3 +34,8 @@
   vertical-align: top;
   height: 100%;
 }
+
+#login-status{
+  background-color: white;
+  transition: background-color .3s ease;
+}
