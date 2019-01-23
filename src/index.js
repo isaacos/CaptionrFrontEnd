@@ -1,6 +1,8 @@
 const ALLPHOTOS = [];
+const USERVOTES = [];
 let CURRENTUSER = null;
 
+const container = document.getElementById('container')
 const photosContainer = document.getElementById('photo-list-container')
 const photoDisplay = document.getElementById('photo-display')
 const sidebar = document.getElementById('sidebar')
@@ -14,6 +16,20 @@ const headers = {
   "Accept": "application/json"
 }
 
+
+function loadUserVotes(photos){
+  console.log("Loading!")
+  photos.forEach(function(photo){
+    console.log(photo)
+    photo.comments.forEach(function(comment){
+      comment.votes.forEach(function(vote){
+        if (vote.user_id===CURRENTUSER.id){
+          USERVOTES.push(vote)
+        }
+      })
+    })
+  })
+}
 
 fetch('http://localhost:3000/api/v1/photos')
 .then(response => response.json())
@@ -31,9 +47,30 @@ function photoDisplayHtmlMaker(photo){
       <input id="comment-body" type="text" placeholder="Caption">
       <button data-id="Button ID" id="submit-comment-button" type="submit">Submit</button>
     </form>
-    <ul id="photo-display-captions">
+    <div id="photo-display-captions">
     ${commentIteratorAndPoster(photo)}
-    </ul>
+    </div>
+  `
+}
+
+function checkUserVote(comment){
+  let upvoted="false"
+  let downvoted="false"
+  if (CURRENTUSER){
+    let commentVote=USERVOTES.find(function(vote){
+      return vote.comment_id===comment.id
+    })
+    if (commentVote){
+      if (commentVote.vote_status === 1){
+        upvoted="true"
+      }else if (commentVote.vote_status === -1){
+        downvoted="true"
+      }
+    }
+  }
+  return `
+    <div class="vote upvote" data-toggled="${upvoted}" data-id="${comment.id}"></div>
+    <div class="vote downvote" data-toggled="${downvoted}" data-id="${comment.id}"></div>
   `
 }
 
@@ -41,7 +78,13 @@ function commentIteratorAndPoster(photo){
   const comments=photo.comments;
   let listItems = ''
   comments.forEach(function(comment){
-    listItems += `<li>${comment.body}</li>`
+    listItems += `
+    <div class="list-item">
+      <p>
+        ${comment.body}
+      </p>
+      ${checkUserVote(comment)}
+    </div>`
   })
   return listItems
 }
@@ -145,10 +188,12 @@ sidebar.addEventListener('click', () => {
 photoDisplay.addEventListener('submit', () => {
   event.preventDefault()
   let commentBody =  document.querySelector('#comment-body').value
+  let comment={body: commentBody, photo_id: event.target.dataset.id, user_id: CURRENTUSER.id}
+  console.log(comment)
   fetch(`http://localhost:3000/api/v1/comments`, {
     method: "POST",
     headers: headers,
-    body: JSON.stringify({body: commentBody, photo_id: event.target.dataset.id})
+    body: JSON.stringify(comment)
   })
   .then(response => response.json())
   .then(data => {
@@ -222,10 +267,54 @@ userForm.addEventListener('submit', () => {
   }
 })
 
+function toggleVote(element){
+  if (element.dataset.toggled==="true"){
+    element.dataset.toggled="false"
+  }else{
+    element.dataset.toggled="true"
+  }
+}
+
+function vote(vote_status, comment_id){
+  let body={}
+  if(CURRENTUSER){
+    body={user_id: CURRENTUSER.id, comment_id: comment_id, vote_status: vote_status}
+  }
+  fetch("localhost:3000/api/v1/votes", {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(body)
+  })
+  .then(r=>r.json())
+  .then(data => {
+    console.log(data)
+  })
+}
+
+container.addEventListener('click', function(){
+  if(event.target.classList.contains("vote")){
+    let commentId=event.target.dataset.id
+    let upArrowDiv=document.querySelector(`.upvote[data-id="${commentId}"]`)
+    let downArrowDiv=document.querySelector(`.downvote[data-id="${commentId}"]`)
+    console.log(upArrowDiv, downArrowDiv)
+    console.log(event.target.dataset.toggled);
+    if(event.target.classList.contains("upvote")){
+      toggleVote(upArrowDiv)
+      downArrowDiv.dataset.toggled="false"
+    }
+    if(event.target.classList.contains("downvote")){
+      toggleVote(downArrowDiv)
+      upArrowDiv.dataset.toggled="false"
+    }
+  }
+})
+
 function successfulLogin(){
   loginStatus.querySelector('h1').innerHTML=`Welcome ${CURRENTUSER.username}`
   userForm.innerHTML=""
   userForm.dataset.action=""
+  loadUserVotes(ALLPHOTOS)
+  console.log("DID IT")
 }
 
 function failedLogin(){
@@ -242,4 +331,16 @@ function loginCheck(){
   }else{
     successfulLogin()
   }
+}
+
+
+
+function vote(){
+  fetch('http://localhost:3000/api/v1/vote', {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({user_id: 1, comment_id: 1})
+  })
+  .then(r => r.json())
+  .then(console.log)
 }

@@ -39,3 +39,29 @@
   background-color: white;
   transition: background-color .3s ease;
 }
+
+.list-item p{
+  display:inline-block;
+}
+.vote{
+  height: 3.5vw;
+  width: 3.5vw;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.upvote{
+  background-image: url("images/up-grey.png");
+  background-size: contain;
+}
+.downvote{
+  background-image: url("images/down-grey.png");
+  background-size: contain;
+}
+.upvote[data-toggled="true"]{
+  background-image: url("images/up-green.png");
+}
+
+.downvote[data-toggled="true"]{
+  background-image: url("images/down-red.png");
+}
