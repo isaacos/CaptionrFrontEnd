@@ -1,6 +1,9 @@
 const ALLPHOTOS = [];
+const USERVOTES = [];
+let CURRENTPHOTO = null;
 let CURRENTUSER = null;
 
+const container = document.getElementById('container')
 const photosContainer = document.getElementById('photo-list-container')
 const photoDisplay = document.getElementById('photo-display')
 const sidebar = document.getElementById('sidebar')
@@ -15,13 +18,23 @@ const headers = {
 }
 
 
+function loadUserVotes(photos){
+  photos.forEach(function(photo){
+    photo.comments.forEach(function(comment){
+      comment.votes.forEach(function(vote){
+        if (vote.user_id===CURRENTUSER.id){
+          USERVOTES.push(vote)
+        }
+      })
+    })
+  })
+}
+
 fetch('http://localhost:3000/api/v1/photos')
 .then(response => response.json())
 .then(photos => {
   photosIteratorAndDisplayer(photos)
   photos.forEach(photo => ALLPHOTOS.push(photo))
-
-  console.log(ALLPHOTOS);
 })
 
 function photoDisplayHtmlMaker(photo){
@@ -31,9 +44,30 @@ function photoDisplayHtmlMaker(photo){
       <input id="comment-body" type="text" placeholder="Caption">
       <button data-id="Button ID" id="submit-comment-button" type="submit">Submit</button>
     </form>
-    <ul id="photo-display-captions">
+    <div id="photo-display-captions">
     ${commentIteratorAndPoster(photo)}
-    </ul>
+    </div>
+  `
+}
+
+function checkUserVote(comment){
+  let upvoted="false"
+  let downvoted="false"
+  if (CURRENTUSER){
+    let commentVote=USERVOTES.find(function(vote){
+      return vote.comment_id===comment.id
+    })
+    if (commentVote){
+      if (commentVote.vote_status === 1){
+        upvoted="true"
+      }else if (commentVote.vote_status === -1){
+        downvoted="true"
+      }
+    }
+  }
+  return `
+    <div class="vote upvote" data-toggled="${upvoted}" data-id="${comment.id}"></div>
+    <div class="vote downvote" data-toggled="${downvoted}" data-id="${comment.id}"></div>
   `
 }
 
@@ -41,7 +75,13 @@ function commentIteratorAndPoster(photo){
   const comments=photo.comments;
   let listItems = ''
   comments.forEach(function(comment){
-    listItems += `<li>${comment.body}</li>`
+    listItems += `
+    <div class="list-item">
+      <p>
+        ${comment.body}
+      </p>
+      ${checkUserVote(comment)}
+    </div>`
   })
   return listItems
 }
@@ -73,8 +113,6 @@ function photoCardHTMLMaker(photo){
 }
 
 function toggleLoginForm(){
-  console.log("Toggling")
-  console.log(userForm.dataset.action)
   if(userForm.dataset.action!=="login"){
     userForm.dataset.action="login"
     return `
@@ -125,8 +163,8 @@ function photosIteratorAndDisplayer(photos){
 photosContainer.addEventListener('click', () => {
   if(event.target.type === 'button'){
     let photoId = event.target.dataset.id
-    let currentPhoto = findPhotoById(photoId)
-    fillPhotoDisplay(currentPhoto)
+    CURRENTPHOTO = findPhotoById(photoId)
+    fillPhotoDisplay(CURRENTPHOTO)
   }
 })
 
@@ -145,10 +183,11 @@ sidebar.addEventListener('click', () => {
 photoDisplay.addEventListener('submit', () => {
   event.preventDefault()
   let commentBody =  document.querySelector('#comment-body').value
+  let comment={body: commentBody, photo_id: event.target.dataset.id, user_id: CURRENTUSER.id}
   fetch(`http://localhost:3000/api/v1/comments`, {
     method: "POST",
     headers: headers,
-    body: JSON.stringify({body: commentBody, photo_id: event.target.dataset.id})
+    body: JSON.stringify(comment)
   })
   .then(response => response.json())
   .then(data => {
@@ -159,7 +198,6 @@ photoDisplay.addEventListener('submit', () => {
 
 
 registerButton.addEventListener('click', () =>{
-  console.log("Register")
   userForm.innerHTML=toggleRegisterForm()
 })
 loginButton.addEventListener('click', () =>{
@@ -178,12 +216,11 @@ addPhotoDiv.addEventListener('submit', () =>{
     body: JSON.stringify(photo)
   }).then(response => response.json())
   .then(data => {
-    console.log(data)
     if (!data.error){
       ALLPHOTOS.push(data)
       photosIteratorAndDisplayer(ALLPHOTOS)
     }else{
-      console.log("Hey you fucked up there bud")
+      alert("Error uploading photo")
     }
   })
 })
@@ -222,10 +259,81 @@ userForm.addEventListener('submit', () => {
   }
 })
 
+function toggleVote(element){
+  if (element.dataset.toggled==="true"){
+    element.dataset.toggled="false"
+  }else{
+    element.dataset.toggled="true"
+  }
+}
+
+function editOrCreateVote(returnedVote){
+  let existingVote=USERVOTES.find(function(vote){
+    return returnedVote.id===vote.id
+  })
+  if (existingVote){
+    console.log("Vote already exists, replacing in USERVOTES")
+    existingVote.vote_status=returnedVote.vote_status;
+    console.log("The changed vote", existingVote)
+  }else{
+    console.log("Creating vote")
+    USERVOTES.push(returnedVote);
+  }
+}
+
+function vote(vote_status, comment_id){
+  let body={}
+  if(CURRENTUSER){
+    body={user_id: CURRENTUSER.id, comment_id: comment_id, vote_status: vote_status}
+  }
+  fetch("http://localhost:3000/api/v1/vote", {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(body)
+  })
+  .then(r=>r.json())
+  .then(data => {
+    console.log("Returned vote", data);
+    editOrCreateVote(data);
+  })
+}
+
+function submitVote(upArrowDiv, downArrowDiv){
+  let commentId=upArrowDiv.dataset.id
+  if (upArrowDiv.dataset.toggled==="true"){
+    vote(1, commentId)
+  }else if(downArrowDiv.dataset.toggled==="true"){
+    vote(-1, commentId)
+  }else{
+    vote(0, commentId)
+  }
+}
+
+container.addEventListener('click', function(){
+  if(event.target.classList.contains("vote")){
+    let commentId=event.target.dataset.id
+    let upArrowDiv=document.querySelector(`.upvote[data-id="${commentId}"]`)
+    let downArrowDiv=document.querySelector(`.downvote[data-id="${commentId}"]`)
+    if(event.target.classList.contains("upvote")){
+      toggleVote(upArrowDiv)
+      downArrowDiv.dataset.toggled="false"
+    }
+    if(event.target.classList.contains("downvote")){
+      toggleVote(downArrowDiv)
+      upArrowDiv.dataset.toggled="false"
+    }
+    submitVote(upArrowDiv, downArrowDiv)
+  }
+})
+
 function successfulLogin(){
   loginStatus.querySelector('h1').innerHTML=`Welcome ${CURRENTUSER.username}`
   userForm.innerHTML=""
   userForm.dataset.action=""
+  loadUserVotes(ALLPHOTOS)
+  if (CURRENTPHOTO){
+    fillPhotoDisplay(CURRENTPHOTO)
+  }
 }
 
 function failedLogin(){
