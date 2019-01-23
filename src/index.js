@@ -8,6 +8,7 @@ const addPhotoDiv = document.getElementById('add-photo-div')
 const userForm = document.getElementById('user-form')
 const loginButton = document.getElementById('login')
 const registerButton = document.getElementById('register')
+const loginStatus = document.getElementById('login-status')
 const headers = {
   "Content-Type": "application/json",
   "Accept": "application/json"
@@ -72,6 +73,8 @@ function photoCardHTMLMaker(photo){
 }
 
 function toggleLoginForm(){
+  console.log("Toggling")
+  console.log(userForm.dataset.action)
   if(userForm.dataset.action!=="login"){
     userForm.dataset.action="login"
     return `
@@ -192,7 +195,10 @@ userForm.addEventListener('submit', () => {
       })
     })
     .then(response => response.json())
-    .then(data => CURRENTUSER = data)
+    .then(data => {
+      CURRENTUSER = data
+      loginCheck()
+    })
   }
 
   if(event.target.id === 'login-form'){
@@ -204,6 +210,31 @@ userForm.addEventListener('submit', () => {
       })
     })
     .then(response => response.json())
-    .then(data => CURRENTUSER=data)
+    .then(data => {
+      CURRENTUSER=data
+      loginCheck()
+    })
   }
 })
+
+function successfulLogin(){
+  loginStatus.querySelector('h1').innerHTML=`Welcome ${CURRENTUSER.username}`
+  userForm.innerHTML=""
+  userForm.dataset.action=""
+}
+
+function failedLogin(){
+  loginStatus.querySelector('h1').innerHTML="Failed login"
+  loginStatus.style.backgroundColor="red"
+  setTimeout(function(){
+    loginStatus.style.backgroundColor="white"
+  }, 300)
+}
+
+function loginCheck(){
+  if(CURRENTUSER === null){
+    failedLogin()
+  }else{
+    successfulLogin()
+  }
+}
