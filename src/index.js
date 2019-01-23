@@ -1,5 +1,5 @@
 const ALLPHOTOS = [];
-let CURRENTUSER;
+let CURRENTUSER = null;
 
 const photosContainer = document.getElementById('photo-list-container')
 const photoDisplay = document.getElementById('photo-display')
@@ -168,9 +168,10 @@ loginButton.addEventListener('click', () =>{
 
 addPhotoDiv.addEventListener('submit', () =>{
   event.preventDefault()
-  let photo = {name: document.getElementById('new-photo-name').value, url: document.getElementById('new-photo-url').value}
-  console.log(photo)
-
+  let photo = {}
+  if (CURRENTUSER){
+    photo = {name: document.getElementById('new-photo-name').value, url: document.getElementById('new-photo-url').value, user_id: CURRENTUSER.id}
+  }
   fetch('http://localhost:3000/api/v1/photos', {
     method: "POST",
     headers: headers,
@@ -178,8 +179,12 @@ addPhotoDiv.addEventListener('submit', () =>{
   }).then(response => response.json())
   .then(data => {
     console.log(data)
-    ALLPHOTOS.push(data)
-    photosIteratorAndDisplayer(ALLPHOTOS)
+    if (!data.error){
+      ALLPHOTOS.push(data)
+      photosIteratorAndDisplayer(ALLPHOTOS)
+    }else{
+      console.log("Hey you fucked up there bud")
+    }
   })
 })
 
