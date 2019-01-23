@@ -18,9 +18,7 @@ const headers = {
 
 
 function loadUserVotes(photos){
-  console.log("Loading!")
   photos.forEach(function(photo){
-    console.log(photo)
     photo.comments.forEach(function(comment){
       comment.votes.forEach(function(vote){
         if (vote.user_id===CURRENTUSER.id){
@@ -36,8 +34,6 @@ fetch('http://localhost:3000/api/v1/photos')
 .then(photos => {
   photosIteratorAndDisplayer(photos)
   photos.forEach(photo => ALLPHOTOS.push(photo))
-
-  console.log(ALLPHOTOS);
 })
 
 function photoDisplayHtmlMaker(photo){
@@ -116,8 +112,6 @@ function photoCardHTMLMaker(photo){
 }
 
 function toggleLoginForm(){
-  console.log("Toggling")
-  console.log(userForm.dataset.action)
   if(userForm.dataset.action!=="login"){
     userForm.dataset.action="login"
     return `
@@ -189,7 +183,6 @@ photoDisplay.addEventListener('submit', () => {
   event.preventDefault()
   let commentBody =  document.querySelector('#comment-body').value
   let comment={body: commentBody, photo_id: event.target.dataset.id, user_id: CURRENTUSER.id}
-  console.log(comment)
   fetch(`http://localhost:3000/api/v1/comments`, {
     method: "POST",
     headers: headers,
@@ -204,7 +197,6 @@ photoDisplay.addEventListener('submit', () => {
 
 
 registerButton.addEventListener('click', () =>{
-  console.log("Register")
   userForm.innerHTML=toggleRegisterForm()
 })
 loginButton.addEventListener('click', () =>{
@@ -223,12 +215,11 @@ addPhotoDiv.addEventListener('submit', () =>{
     body: JSON.stringify(photo)
   }).then(response => response.json())
   .then(data => {
-    console.log(data)
     if (!data.error){
       ALLPHOTOS.push(data)
       photosIteratorAndDisplayer(ALLPHOTOS)
     }else{
-      console.log("Hey you fucked up there bud")
+      alert("Error uploading photo")
     }
   })
 })
@@ -275,20 +266,46 @@ function toggleVote(element){
   }
 }
 
+function editOrCreateVote(returnedVote){
+  let existingVote=USERVOTES.find(function(vote){
+    return returnedVote.id===vote.id
+  })
+  if (existingVote){
+    console.log("Vote already exists, replacing in USERVOTES")
+    existingVote.vote_status=returnedVote.vote_status;
+    console.log("The changed vote", existingVote)
+  }else{
+    console.log("Creating vote")
+    USERVOTES.push(returnedVote);
+  }
+}
+
 function vote(vote_status, comment_id){
   let body={}
   if(CURRENTUSER){
     body={user_id: CURRENTUSER.id, comment_id: comment_id, vote_status: vote_status}
   }
-  fetch("localhost:3000/api/v1/votes", {
+  fetch("http://localhost:3000/api/v1/vote", {
     method: "POST",
     headers: headers,
     body: JSON.stringify(body)
   })
   .then(r=>r.json())
   .then(data => {
-    console.log(data)
+    console.log("Returned vote", data);
+    editOrCreateVote(data);
   })
+}
+
+function submitVote(upArrowDiv, downArrowDiv){
+  let commentId=upArrowDiv.dataset.id
+  if (upArrowDiv.dataset.toggled==="true"){
+    vote(1, commentId)
+  }else if(downArrowDiv.dataset.toggled==="true"){
+    vote(-1, commentId)
+  }else{
+    vote(0, commentId)
+  }
 }
 
 container.addEventListener('click', function(){
@@ -296,8 +313,6 @@ container.addEventListener('click', function(){
     let commentId=event.target.dataset.id
     let upArrowDiv=document.querySelector(`.upvote[data-id="${commentId}"]`)
     let downArrowDiv=document.querySelector(`.downvote[data-id="${commentId}"]`)
-    console.log(upArrowDiv, downArrowDiv)
-    console.log(event.target.dataset.toggled);
     if(event.target.classList.contains("upvote")){
       toggleVote(upArrowDiv)
       downArrowDiv.dataset.toggled="false"
@@ -306,6 +321,7 @@ container.addEventListener('click', function(){
       toggleVote(downArrowDiv)
       upArrowDiv.dataset.toggled="false"
     }
+    submitVote(upArrowDiv, downArrowDiv)
   }
 })
 
@@ -314,7 +330,6 @@ function successfulLogin(){
   userForm.innerHTML=""
   userForm.dataset.action=""
   loadUserVotes(ALLPHOTOS)
-  console.log("DID IT")
 }
 
 function failedLogin(){
@@ -331,16 +346,4 @@ function loginCheck(){
   }else{
     successfulLogin()
   }
-}
-
-
-
-function vote(){
-  fetch('http://localhost:3000/api/v1/vote', {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify({user_id: 1, comment_id: 1})
-  })
-  .then(r => r.json())
-  .then(console.log)
 }
