@@ -1,5 +1,6 @@
 const ALLPHOTOS = [];
 const USERVOTES = [];
+let CURRENTPHOTO = null;
 let CURRENTUSER = null;
 
 const container = document.getElementById('container')
@@ -162,8 +163,8 @@ function photosIteratorAndDisplayer(photos){
 photosContainer.addEventListener('click', () => {
   if(event.target.type === 'button'){
     let photoId = event.target.dataset.id
-    let currentPhoto = findPhotoById(photoId)
-    fillPhotoDisplay(currentPhoto)
+    CURRENTPHOTO = findPhotoById(photoId)
+    fillPhotoDisplay(CURRENTPHOTO)
   }
 })
 
@@ -330,6 +331,9 @@ function successfulLogin(){
   userForm.innerHTML=""
   userForm.dataset.action=""
   loadUserVotes(ALLPHOTOS)
+  if (CURRENTPHOTO){
+    fillPhotoDisplay(CURRENTPHOTO)
+  }
 }
 
 function failedLogin(){
