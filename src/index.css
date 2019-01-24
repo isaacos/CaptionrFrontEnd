@@ -7,8 +7,12 @@
 .photo-card{
   border: 1px solid black;
   display:inline-block;
-  padding:1vmin;
+  padding:5vmin;
   margin:1vmin;
+}
+
+.border-radius{
+  border-radius: 25px;
 }
 
 #photo-display{
@@ -19,7 +23,7 @@
   width: 60vw;
   height: 60vw;
   object-fit: cover;
-  border: 1px solid black;
+  border: 1vmin solid black;
 }
 
 #sidebar{
