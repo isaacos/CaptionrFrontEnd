@@ -5,7 +5,7 @@
 }
 
 .photo-card{
-  border: 1px solid black;
+  border: 1vmin solid #57606f;
   display:inline-block;
   padding:5vmin;
   margin:1vmin;
@@ -15,15 +15,20 @@
   border-radius: 25px;
 }
 
+img {
+  border-radius: 25px;
+}
+
 #photo-display{
   display: inline-block;
+
 }
 
 #photo-display-img{
   width: 60vw;
   height: 60vw;
   object-fit: cover;
-  border: 1vmin solid black;
+  border: 1px solid black;
 }
 
 #sidebar{

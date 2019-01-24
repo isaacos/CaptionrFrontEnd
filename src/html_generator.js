@@ -69,3 +69,18 @@ function photoDisplayHtmlMaker(photo){
     </div>
   `
 }
+
+function commentIteratorAndPoster(photo){
+  const comments=photo.comments;
+  let listItems = ''
+  comments.forEach(function(comment){
+    listItems += `
+    <div class="list-item">
+      <p>
+        ${comment.body}
+      </p>
+      ${checkUserVote(comment)}
+    </div>`
+  })
+  return listItems
+}  
