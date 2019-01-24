@@ -1,11 +1,10 @@
 function topCaption(photo){
   console.log(photo.comments)
-  if (photo.comments===[]){
+  if (photo.comments.length===0){
     return `<p>No captions yet</p>`
   }else{
-    return `<p>"${photo.comments.reduce((a, b) => {
-      return (a.score>b.score) ? a : b
-    }).body}"</p>`
+    let sortedComments=[...photo.comments].sort((a, b) => b.score-a.score)
+    return `<p>"${sortedComments[0].body}"</p>`
   }
 }
 
@@ -84,18 +83,21 @@ function photoDisplayHtmlMaker(photo){
 
 function commentIteratorAndPoster(photo){
   const comments=photo.comments;
+  let sortedComments=[];
   if (photo.comments.length!==0){
-    photo.comments.sort((a, b) => b.score-a.score)
+    sortedComments=[...photo.comments].sort((a, b) => b.score-a.score)
   }
   let listItems = ''
-  comments.forEach(function(comment){
+  let current=1;
+  sortedComments.forEach(function(comment){
     listItems += `
     <div class="list-item comment">
       <p>
-        ${comment.body}
+        <span style="font-weight:bold">${current}.</span> ${comment.body}
       </p>
       ${checkUserVote(comment)}
     </div>`
+    current++
   })
   return listItems
 }
