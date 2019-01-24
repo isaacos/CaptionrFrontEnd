@@ -1,11 +1,10 @@
 function topCaption(photo){
   console.log(photo.comments)
-  if (photo.comments.length ===0){
+  if (photo.comments.length === 0){
     return `<p>No captions yet</p>`
   }else{
-    return `<p>"${photo.comments.reduce((a, b) => {
-      return (a.score>b.score) ? a : b
-    }).body}"</p>`
+    let sortedComments=[...photo.comments].sort((a, b) => b.score-a.score)
+    return `<p>"${sortedComments[0].body}"</p>`
   }
 }
 
@@ -20,48 +19,15 @@ function photoCardHTMLMaker(photo){
   `
 }
 
-
-function toggleRegisterForm(){
-  if(userForm.dataset.action!=="register"){
-    userForm.dataset.action="register"
-    return `
-      <form id="register-form">
-        <label for="register-username">Username</label>
-        <input type="text" id="register-username">
-        <button type="submit">Register</button>
-      </form>
-    `
-  }else{
-    userForm.dataset.action=""
-    return ""
-  }
-}
-
-function toggleLoginForm(){
-  if(userForm.dataset.action!=="login"){
-    userForm.dataset.action="login"
-    return `
-    <form id="login-form">
-    <label for="login-username">Username</label>
-    <input type="text" id="login-username">
-    <button type="submit">Log In</button>
-    </form>
-    `
-  }else{
-    userForm.dataset.action=""
-    return ""
-  }
-}
-
 function addPhotoFormHTMLMaker(){
   if (addPhotoDiv.innerHTML===""){
     return `
     <form id="add-photo-form">
-    <label for="new-photo-name">Title:</label>
-    <input type="text" id="new-photo-name">
-    <label for="new-photo-url">Photo URL:</label>
-    <input type="text" id="new-photo-url">
-    <button type="submit">Submit photo</button>
+      <label for="new-photo-name">Title:</label>
+      <input type="text" id="new-photo-name">
+      <label for="new-photo-url">Photo URL:</label>
+      <input type="text" id="new-photo-url">
+      <button type="submit">Submit photo</button>
     </form>
     `
   }else{
@@ -86,18 +52,21 @@ function photoDisplayHtmlMaker(photo){
 
 function commentIteratorAndPoster(photo){
   const comments=photo.comments;
+  let sortedComments=[];
   if (photo.comments.length!==0){
-    photo.comments.sort((a, b) => b.score-a.score)
+    sortedComments=[...photo.comments].sort((a, b) => b.score-a.score)
   }
   let listItems = ''
-  comments.forEach(function(comment){
+  let current=1;
+  sortedComments.forEach(function(comment){
     listItems += `
     <div class="list-item comment border-radius" data-score=${comment.score}>
       <p>
-        ${comment.body}
+        <span style="font-weight:bold">${current}.</span> ${comment.body}
       </p>
       ${checkUserVote(comment)}
     </div>`
+    current++
   })
   return listItems
 }
