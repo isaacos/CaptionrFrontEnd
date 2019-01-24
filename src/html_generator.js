@@ -1,8 +1,20 @@
+function topCaption(photo){
+  console.log(photo.comments)
+  if (photo.comments===[]){
+    return `<p>No captions yet</p>`
+  }else{
+    return `<p>"${photo.comments.reduce((a, b) => {
+      return (a.score>b.score) ? a : b
+    }).body}"</p>`
+  }
+}
+
 function photoCardHTMLMaker(photo){
   return  `
   <div class="photo-card border-radius">
     <img class="caption-photo" src="${photo.url}" alt="">
     <p></p>
+    ${topCaption(photo)}
     <button data-id =${photo.id} type="button" name="button">SeaMore BUtts</button>
   </div>
   `
@@ -72,10 +84,13 @@ function photoDisplayHtmlMaker(photo){
 
 function commentIteratorAndPoster(photo){
   const comments=photo.comments;
+  if (photo.comments.length!==0){
+    photo.comments.sort((a, b) => b.score-a.score)
+  }
   let listItems = ''
   comments.forEach(function(comment){
     listItems += `
-    <div class="list-item">
+    <div class="list-item comment">
       <p>
         ${comment.body}
       </p>
@@ -83,4 +98,4 @@ function commentIteratorAndPoster(photo){
     </div>`
   })
   return listItems
-}  
+}
