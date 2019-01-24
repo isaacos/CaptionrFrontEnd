@@ -76,8 +76,8 @@ img {
   display:inline-block;
 }
 .vote{
-  height: 3.5vw;
-  width: 3.5vw;
+  height: 1.5em;
+  width: 1.5em;
   display: inline-block;
   cursor: pointer;
 }
@@ -104,4 +104,13 @@ button {
   height: 5vmin;
   width: 20vmin;
   margin: 0.5vmin;
+}
+
+#photo-display{
+  position: absolute;
+  left: 0;
+  top: 0;
+  text-align: center;
+  width: 100%;
+  background-color: #00000069
 }

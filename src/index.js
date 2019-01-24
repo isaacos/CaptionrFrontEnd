@@ -249,7 +249,7 @@ function submitVote(upArrowDiv, downArrowDiv){
   }
 }
 
-container.addEventListener('click', function(){
+document.addEventListener('click', function(){
   if(event.target.classList.contains("vote")){
     if(verifyLogin()){
       let commentId=event.target.dataset.id
@@ -265,6 +265,9 @@ container.addEventListener('click', function(){
       }
       submitVote(upArrowDiv, downArrowDiv)
     }
+  }
+  if(event.target.id==="photo-display"){
+    closeModal()
   }
 })
 
@@ -302,6 +305,7 @@ function loginCheck(logout=false){
 
 function verifyLogin(){
   if(CURRENTUSER === null){
+    closeModal()
     window.scrollTo(0, 0);
     logMessage("Sorry, you must be logged in to perform this action")
     messageDiv.style.backgroundColor="red"
@@ -312,4 +316,8 @@ function verifyLogin(){
   }else{
     return true
   }
+}
+
+function closeModal(){
+  photoDisplay.innerHTML="";
 }
