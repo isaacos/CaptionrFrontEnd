@@ -7,15 +7,18 @@
   </head>
   <body>
     <div id="sidebar">
-      <div id="login-status">
-        <h1>You need to log in!</h1>
+      <div id="message-div">
       </div>
-      <button type="button" id="login">Login</button><br>
-      <button type="button" id="register">Register</button><br>
-
-      <button type="button" id="add-photo-button">Add a photo</button>
-      <div id="user-form"></div>
-      <div id="add-photo-div"></div>
+      <div id="login-form">
+        <input type="text" id="username" placeholder="username"></input><br>
+        <button type="button" id="login">Login</button>
+        <button type="button" id="register">Register</button><br>
+      </div>
+      <div id="user-features" style="display:none;">
+        <button type="button" id="logout">Log out</buttton>
+        <button type="button" id="add-photo-button">Add a photo</button>
+        <div id="add-photo-div"></div>
+      </div>
     </div>
     <div id="container">
       <div id="photo-list-container"></div>

@@ -8,15 +8,20 @@ const photosContainer = document.getElementById('photo-list-container')
 const photoDisplay = document.getElementById('photo-display')
 const sidebar = document.getElementById('sidebar')
 const addPhotoDiv = document.getElementById('add-photo-div')
-const userForm = document.getElementById('user-form')
 const loginButton = document.getElementById('login')
 const registerButton = document.getElementById('register')
-const loginStatus = document.getElementById('login-status')
+const logoutButton = document.getElementById('logout')
+const messageDiv = document.getElementById('message-div')
+const usernameInput = document.getElementById('username')
 const headers = {
   "Content-Type": "application/json",
   "Accept": "application/json"
 }
 
+function logMessage(message){
+  messageDiv.innerHTML=""
+  messageDiv.innerHTML=message
+}
 
 function loadUserVotes(photos){
   photos.forEach(function(photo){
@@ -123,10 +128,13 @@ photoDisplay.addEventListener('submit', () => {
 
 
 registerButton.addEventListener('click', () =>{
-  userForm.innerHTML=toggleRegisterForm()
+  registerUser()
 })
 loginButton.addEventListener('click', () =>{
-  userForm.innerHTML=toggleLoginForm()
+  loginUser()
+})
+logoutButton.addEventListener('click', () => {
+  logoutUser()
 })
 
 addPhotoDiv.addEventListener('submit', () =>{
@@ -150,39 +158,46 @@ addPhotoDiv.addEventListener('submit', () =>{
   })
 })
 
-userForm.addEventListener('submit', () => {
-
-  event.preventDefault()
-  if(event.target.id === 'register-form'){
-    fetch('http://localhost:3000/api/v1/register', {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        username: document.getElementById('register-username').value
-      })
+function registerUser(){
+  let username=usernameInput.value
+  fetch('http://localhost:3000/api/v1/register', {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      username: username
     })
-    .then(response => response.json())
-    .then(data => {
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (!data.id){
+      logMessage(data.username[0])
+    }else{
       CURRENTUSER = data
       loginCheck()
-    })
-  }
+    }
+  })
+}
 
-  if(event.target.id === 'login-form'){
-    fetch('http://localhost:3000/api/v1/login', {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({
-        username: document.getElementById('login-username').value
-      })
+function loginUser(){
+  let username=usernameInput.value
+  fetch('http://localhost:3000/api/v1/login', {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      username: username
     })
-    .then(response => response.json())
-    .then(data => {
-      CURRENTUSER=data
-      loginCheck()
-    })
-  }
-})
+  })
+  .then(response => response.json())
+  .then(data => {
+    CURRENTUSER=data
+    loginCheck()
+  })
+}
+
+function logoutUser(){
+  CURRENTUSER = null
+  loginCheck(true)
+}
 
 function toggleVote(element){
   if (element.dataset.toggled==="true"){
@@ -236,43 +251,65 @@ function submitVote(upArrowDiv, downArrowDiv){
 
 container.addEventListener('click', function(){
   if(event.target.classList.contains("vote")){
-    let commentId=event.target.dataset.id
-    let upArrowDiv=document.querySelector(`.upvote[data-id="${commentId}"]`)
-    let downArrowDiv=document.querySelector(`.downvote[data-id="${commentId}"]`)
-    if(event.target.classList.contains("upvote")){
-      toggleVote(upArrowDiv)
-      downArrowDiv.dataset.toggled="false"
+    if(verifyLogin()){
+      let commentId=event.target.dataset.id
+      let upArrowDiv=document.querySelector(`.upvote[data-id="${commentId}"]`)
+      let downArrowDiv=document.querySelector(`.downvote[data-id="${commentId}"]`)
+      if(event.target.classList.contains("upvote")){
+        toggleVote(upArrowDiv)
+        downArrowDiv.dataset.toggled="false"
+      }
+      if(event.target.classList.contains("downvote")){
+        toggleVote(downArrowDiv)
+        upArrowDiv.dataset.toggled="false"
+      }
+      submitVote(upArrowDiv, downArrowDiv)
     }
-    if(event.target.classList.contains("downvote")){
-      toggleVote(downArrowDiv)
-      upArrowDiv.dataset.toggled="false"
-    }
-    submitVote(upArrowDiv, downArrowDiv)
   }
 })
 
 function successfulLogin(){
-  loginStatus.querySelector('h1').innerHTML=`Welcome ${CURRENTUSER.username}`
-  userForm.innerHTML=""
-  userForm.dataset.action=""
+  logMessage(`Welcome ${CURRENTUSER.username}`)
   loadUserVotes(ALLPHOTOS)
   if (CURRENTPHOTO){
     fillPhotoDisplay(CURRENTPHOTO)
   }
+  document.querySelector('#login-form').style.display="none"
+  document.querySelector('#user-features').style.display="inline-block"
 }
 
-function failedLogin(){
-  loginStatus.querySelector('h1').innerHTML="Failed login"
-  loginStatus.style.backgroundColor="red"
-  setTimeout(function(){
-    loginStatus.style.backgroundColor="white"
-  }, 300)
+function failedLogin(logout=false){
+  if (logout){
+    logMessage("You have been logged out")
+  }else{
+    logMessage("Failed login")
+    messageDiv.style.backgroundColor="red"
+    setTimeout(function(){
+      messageDiv.style.backgroundColor="white"
+    }, 300)
+  }
+  document.querySelector('#login-form').style.display="inline-block"
+  document.querySelector('#user-features').style.display="none"
 }
 
-function loginCheck(){
+function loginCheck(logout=false){
   if(CURRENTUSER === null){
-    failedLogin()
+    failedLogin(logout)
   }else{
     successfulLogin()
+  }
+}
+
+function verifyLogin(){
+  if(CURRENTUSER === null){
+    window.scrollTo(0, 0);
+    logMessage("Sorry, you must be logged in to perform this action")
+    messageDiv.style.backgroundColor="red"
+    setTimeout(function(){
+      messageDiv.style.backgroundColor="white"
+    }, 500)
+    return false
+  }else{
+    return true
   }
 }

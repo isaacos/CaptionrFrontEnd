@@ -19,48 +19,15 @@ function photoCardHTMLMaker(photo){
   `
 }
 
-
-function toggleRegisterForm(){
-  if(userForm.dataset.action!=="register"){
-    userForm.dataset.action="register"
-    return `
-      <form id="register-form">
-        <label for="register-username">Username</label>
-        <input type="text" id="register-username">
-        <button type="submit">Register</button>
-      </form>
-    `
-  }else{
-    userForm.dataset.action=""
-    return ""
-  }
-}
-
-function toggleLoginForm(){
-  if(userForm.dataset.action!=="login"){
-    userForm.dataset.action="login"
-    return `
-    <form id="login-form">
-    <label for="login-username">Username</label>
-    <input type="text" id="login-username">
-    <button type="submit">Log In</button>
-    </form>
-    `
-  }else{
-    userForm.dataset.action=""
-    return ""
-  }
-}
-
 function addPhotoFormHTMLMaker(){
   if (addPhotoDiv.innerHTML===""){
     return `
     <form id="add-photo-form">
-    <label for="new-photo-name">Title:</label>
-    <input type="text" id="new-photo-name">
-    <label for="new-photo-url">Photo URL:</label>
-    <input type="text" id="new-photo-url">
-    <button type="submit">Submit photo</button>
+      <label for="new-photo-name">Title:</label>
+      <input type="text" id="new-photo-name">
+      <label for="new-photo-url">Photo URL:</label>
+      <input type="text" id="new-photo-url">
+      <button type="submit">Submit photo</button>
     </form>
     `
   }else{
