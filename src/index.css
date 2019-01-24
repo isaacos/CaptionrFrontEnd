@@ -6,6 +6,7 @@
 
 .photo-card{
   border: 1vmin solid #57606f;
+  background-color: rgb(217, 255, 221);
   display:inline-block;
   padding:5vmin;
   margin:1vmin;
@@ -19,16 +20,38 @@ img {
   border-radius: 25px;
 }
 
-#photo-display{
+.photo-displayer-innerdiv{
   display: inline-block;
-
+  border: 1vmin solid #57606f;
+  background-color: rgb(217, 255, 221);
+  padding:5vmin;
+  margin:1vmin;
 }
+
+.list-item.comment {
+  margin: 1vmin;
+  padding: 2vmin;
+  background-color: #f4f5f5;
+  border: 0.5vmin solid #010203;
+}
+
+#new-comment-form {
+  padding: 4vmin;
+}
+
+#comment-body {
+  border-radius: 10px;
+  height: 15vmin;
+  width: 70vmin;
+}
+
+
 
 #photo-display-img{
   width: 60vw;
   height: 60vw;
   object-fit: cover;
-  border: 1px solid black;
+
 }
 
 #sidebar{
@@ -73,4 +96,12 @@ img {
 
 .downvote[data-toggled="true"]{
   background-image: url("images/down-red.png");
+}
+
+button {
+  border: none;
+  height: 5vmin;
+  width: 20vmin;
+  margin: 0.5vmin;
+
 }
