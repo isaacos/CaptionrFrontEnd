@@ -100,10 +100,8 @@ img {
 
 button {
   border: none;
-  background-color:
+  background-color: white;
   height: 5vmin;
   width: 20vmin;
   margin: 0.5vmin;
-
-
 }

@@ -37,13 +37,15 @@ function addPhotoFormHTMLMaker(){
 
 function photoDisplayHtmlMaker(photo){
   return `
-    <img alt="${photo.name}" title="${photo.name}" id="photo-display-img" src=${photo.url}></img>
-    <form data-id="${photo.id}" id="new-comment-form">
-      <input id="comment-body" type="text" placeholder="Caption">
-      <button data-id="Button ID" id="submit-comment-button" type="submit">Submit</button>
-    </form>
-    <div id="photo-display-captions">
-    ${commentIteratorAndPoster(photo)}
+    <div class="photo-displayer-innerdiv border-radius">
+      <img alt="${photo.name}" title="${photo.name}" id="photo-display-img" src=${photo.url}></img>
+      <form data-id="${photo.id}" id="new-comment-form" align="center">
+        <input id="comment-body" type="text" placeholder="Caption">
+        <button data-id="Button ID" id="submit-comment-button" type="submit">Submit</button>
+      </form>
+      <div id="photo-display-captions">
+      ${commentIteratorAndPoster(photo)}
+      </div>
     </div>
   `
 }
@@ -58,7 +60,7 @@ function commentIteratorAndPoster(photo){
   let current=1;
   sortedComments.forEach(function(comment){
     listItems += `
-    <div class="list-item comment">
+    <div class="list-item comment border-radius" data-score=${comment.score}>
       <p>
         <span style="font-weight:bold">${current}.</span> ${comment.body}
       </p>
