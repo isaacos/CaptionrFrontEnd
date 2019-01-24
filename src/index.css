@@ -5,7 +5,8 @@
 }
 
 .photo-card{
-  border: 1px solid black;
+  border: 1vmin solid #57606f;
+  background-color: rgb(217, 255, 221);
   display:inline-block;
   padding:5vmin;
   margin:1vmin;
@@ -15,15 +16,42 @@
   border-radius: 25px;
 }
 
-#photo-display{
-  display: inline-block;
+img {
+  border-radius: 25px;
 }
+
+.photo-displayer-innerdiv{
+  display: inline-block;
+  border: 1vmin solid #57606f;
+  background-color: rgb(217, 255, 221);
+  padding:5vmin;
+  margin:1vmin;
+}
+
+.list-item.comment {
+  margin: 1vmin;
+  padding: 2vmin;
+  background-color: #f4f5f5;
+  border: 0.5vmin solid #010203;
+}
+
+#new-comment-form {
+  padding: 4vmin;
+}
+
+#comment-body {
+  border-radius: 10px;
+  height: 15vmin;
+  width: 70vmin;
+}
+
+
 
 #photo-display-img{
   width: 60vw;
   height: 60vw;
   object-fit: cover;
-  border: 1vmin solid black;
+
 }
 
 #sidebar{
@@ -39,13 +67,9 @@
   height: 100%;
 }
 
-#message-div{
+#login-status{
   background-color: white;
   transition: background-color .3s ease;
-}
-
-#add-photo-form input, #add-photo-form label, #add-photo-form submit{
-  display:block;
 }
 
 .list-item p{
@@ -72,4 +96,14 @@
 
 .downvote[data-toggled="true"]{
   background-image: url("images/down-red.png");
+}
+
+button {
+  border: none;
+  background-color:
+  height: 5vmin;
+  width: 20vmin;
+  margin: 0.5vmin;
+
+
 }
