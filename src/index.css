@@ -21,8 +21,7 @@
 }
 
 .caption-photo{
-  width:20vw;
-  height:20vw;
+  width:100%;
   object-fit: cover;
 }
 
@@ -34,6 +33,16 @@
   padding:5vmin;
   margin:1vmin;
   text-align:center;
+  width:24vw;
+  vertical-align:top;
+  justify-self: center;
+}
+#photo-list-container{
+  width:100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: auto;
+  grid-gap:.5rem;
 }
 
 .border-radius{
@@ -66,15 +75,16 @@ img {
 
 #comment-body {
   border-radius: 10px;
-  height: 15vmin;
+  height: 10vmin;
   width: 70vmin;
+  font-size: 2.5em
 }
 
 
 
 #photo-display-img{
-  width: 60vw;
-  height: 60vw;
+  width: 47vw;
+  height: 47vw;
   object-fit: cover;
 
 }
@@ -87,7 +97,7 @@ img {
   box-sizing:border-box;
   padding-top:20px;
   background-image: linear-gradient(to left, #000003, #0a0b18, #0e1326, #0c1a36, #022146);
-
+  color:white;
 }
 
 #container{
@@ -182,4 +192,8 @@ img.hand{
   margin: 0;
   width:3em;
   border-radius:0px;
+}
+
+.message-div{
+  width:79%;
 }

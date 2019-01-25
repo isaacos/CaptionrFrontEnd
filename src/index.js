@@ -113,17 +113,19 @@ sidebar.addEventListener('click', () => {
 
 photoDisplay.addEventListener('submit', () => {
   event.preventDefault()
-  let commentBody =  document.querySelector('#comment-body').value
-  let comment={body: commentBody, photo_id: event.target.dataset.id, user_id: CURRENTUSER.id}
-  fetch(`http://localhost:3000/api/v1/comments`, {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify(comment)
-  })
-  .then(response => response.json())
-  .then(data => {
-    addCommentByPhotoId(data)
-  })
+  if (verifyLogin()){
+    let commentBody =  document.querySelector('#comment-body').value
+    let comment={body: commentBody, photo_id: event.target.dataset.id, user_id: CURRENTUSER.id}
+    fetch(`http://localhost:3000/api/v1/comments`, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(comment)
+    })
+    .then(response => response.json())
+    .then(data => {
+      addCommentByPhotoId(data)
+    })
+  }
 })
 
 
@@ -286,7 +288,7 @@ function failedLogin(logout=false){
     logMessage("Failed login")
     messageDiv.style.backgroundColor="red"
     setTimeout(function(){
-      messageDiv.style.backgroundColor="white"
+      messageDiv.style.backgroundColor="#FF000000"
     }, 300)
   }
   document.querySelector('#login-form').style.display="inline-block"
@@ -308,7 +310,7 @@ function verifyLogin(){
     logMessage("Sorry, you must be logged in to perform this action")
     messageDiv.style.backgroundColor="red"
     setTimeout(function(){
-      messageDiv.style.backgroundColor="white"
+      messageDiv.style.backgroundColor="#FF000000"
     }, 500)
     return false
   }else{

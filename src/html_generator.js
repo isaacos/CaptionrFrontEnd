@@ -14,7 +14,7 @@ function photoCardHTMLMaker(photo){
     <img class="caption-photo" src="${photo.url}" alt="">
     <p></p>
     ${topCaption(photo)}
-    <button data-id =${photo.id} type="button" name="button">SeaMore BUtts</button>
+    <button data-id =${photo.id} type="button" name="button">See all captions</button>
   </div>
   `
 }
@@ -40,7 +40,7 @@ function photoDisplayHtmlMaker(photo){
     <div class="photo-displayer-innerdiv border-radius">
       <img alt="${photo.name}" title="${photo.name}" id="photo-display-img" src=${photo.url}></img>
       <form data-id="${photo.id}" id="new-comment-form" align="center">
-        <input id="comment-body" type="text" placeholder="Caption">
+        <input id="comment-body" type="text" autocomplete="off" placeholder="Caption">
         <button data-id="Button ID" id="submit-comment-button" type="submit">Submit</button>
       </form>
       <div id="photo-display-captions">
