@@ -6,23 +6,25 @@
     <link rel="stylesheet" href="src/index.css">
   </head>
   <body>
-    <div id="sidebar">
-      <div id="message-div">
+    <div id="page-container">
+      <div id="sidebar">
+        <div id="message-div">
+        </div>
+        <div id="login-form">
+          <input type="text" id="username" placeholder="Username"></input><br>
+          <button type="button" id="login">Login</button>
+          <button type="button" id="register">Register</button><br>
+        </div>
+        <div id="user-features" style="display:none;">
+          <button type="button" id="logout">Log out</buttton>
+          <button type="button" id="add-photo-button">Add a photo</button>
+          <div id="add-photo-div"></div>
+        </div>
       </div>
-      <div id="login-form">
-        <input type="text" id="username" placeholder="username"></input><br>
-        <button type="button" id="login">Login</button>
-        <button type="button" id="register">Register</button><br>
+      <div id="container">
+        <div id="photo-list-container"></div>
+        <div id="photo-display"></div>
       </div>
-      <div id="user-features" style="display:none;">
-        <button type="button" id="logout">Log out</buttton>
-        <button type="button" id="add-photo-button">Add a photo</button>
-        <div id="add-photo-div"></div>
-      </div>
-    </div>
-    <div id="container">
-      <div id="photo-list-container"></div>
-      <div id="photo-display"></div>
     </div>
     <script src="src/html_generator.js" charset="utf-8"></script>
     <script src="src/index.js" charset="utf-8"></script>

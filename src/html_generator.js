@@ -23,10 +23,10 @@ function addPhotoFormHTMLMaker(){
   if (addPhotoDiv.innerHTML===""){
     return `
     <form id="add-photo-form">
-      <label for="new-photo-name">Title:</label>
-      <input type="text" id="new-photo-name">
-      <label for="new-photo-url">Photo URL:</label>
-      <input type="text" id="new-photo-url">
+      <label for="new-photo-name">Title:</label><br>
+      <input type="text" id="new-photo-name"><br>
+      <label for="new-photo-url">Photo URL:</label><br>
+      <input type="text" id="new-photo-url"><br>
       <button type="submit">Submit photo</button>
     </form>
     `

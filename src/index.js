@@ -74,6 +74,7 @@ function checkUserVote(comment){
 
 
 function fillPhotoDisplay(photo){
+  photoDisplay.style.display="inline-block"
   photoDisplay.innerHTML=photoDisplayHtmlMaker(photo)
 }
 
@@ -274,9 +275,6 @@ document.addEventListener('click', function(){
 function successfulLogin(){
   logMessage(`Welcome ${CURRENTUSER.username}`)
   loadUserVotes(ALLPHOTOS)
-  if (CURRENTPHOTO){
-    fillPhotoDisplay(CURRENTPHOTO)
-  }
   document.querySelector('#login-form').style.display="none"
   document.querySelector('#user-features').style.display="inline-block"
 }
@@ -319,5 +317,6 @@ function verifyLogin(){
 }
 
 function closeModal(){
+  photoDisplay.style.display="none";
   photoDisplay.innerHTML="";
 }
