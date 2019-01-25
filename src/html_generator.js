@@ -50,6 +50,22 @@ function photoDisplayHtmlMaker(photo){
   `
 }
 
+function winningComment(current){
+  if (current===1){
+    return `list-item winning-comment border-radius`
+  }else{
+    return `list-item comment border-radius`
+  }
+}
+
+function generateHand(current){
+  if (current===1){
+    return `<img class="hand" src="src/images/hand2.png">`
+  }else{
+    return ``
+  }
+}
+
 function commentIteratorAndPoster(photo){
   const comments=photo.comments;
   let sortedComments=[];
@@ -60,9 +76,9 @@ function commentIteratorAndPoster(photo){
   let current=1;
   sortedComments.forEach(function(comment){
     listItems += `
-    <div class="list-item comment border-radius" data-score=${comment.score}>
+    <div class="${winningComment(current)}" data-score=${comment.score}>
       <p>
-        <span style="font-weight:bold">${current}.</span> ${comment.body}
+        ${generateHand(current)}<span style="font-weight:bold">${current}.</span> ${comment.body}
       </p>
       ${checkUserVote(comment)}
     </div>`

@@ -1,3 +1,11 @@
+
+.winning-comment{
+  background-color: gold;
+  margin: 1vmin;
+  padding: 2vmin;
+  border: 0.5vmin solid #010203;
+}
+
 #page-container{
   position:absolute;
   top:0;
@@ -168,4 +176,10 @@ button:focus{
 
 #sidebar button{
   width: 80%;
+}
+
+img.hand{
+  margin: 0;
+  width:3em;
+  border-radius:0px;
 }
